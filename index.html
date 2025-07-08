@@ -34,6 +34,7 @@
             color: white;
             background: linear-gradient(135deg, rgba(26, 26, 26, 0.5), rgba(20, 60, 80, 0.5)), url('https://i.postimg.cc/Y2sVT52Z/photo-2025-07-07-18-16-50.jpg') no-repeat center center/cover;
             animation: moveBackground 20s infinite alternate;
+            overflow: hidden;
         }
 
         .content-container {
@@ -47,6 +48,8 @@
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
             animation: fadeIn 1.5s ease-in-out;
+            position: relative;
+            z-index: 10;
         }
 
         .avatar {
@@ -132,6 +135,7 @@
             box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
             display: none;
             transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 100;
         }
 
         .scroll-top:hover {
@@ -152,106 +156,44 @@
             text-shadow: 0 0 10px rgba(0, 191, 255, 0.8), 0 0 20px rgba(64, 224, 208, 0.8);
         }
 
-        /* Card styles */
-        .intro-card {
+        /* Falling Images */
+        .falling-images {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            padding: 20px;
-            border: 1px solid #0d1117;
-            border-radius: 10px;
-            background-color: #000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        .intro-card.show {
-            opacity: 1;
+        .falling-img {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url('https://i.postimg.cc/6qMYLGjy/i-2.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+            animation: falling linear infinite;
+            filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.7));
         }
 
-        .intro-card.hide {
-            opacity: 0;
-        }
-
-        .mac-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .mac-header span {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .mac-header .red {
-            background-color: #ff5f57;
-        }
-
-        .mac-header .yellow {
-            background-color: #ffbd2e;
-        }
-
-        .mac-header .green {
-            background-color: #28c941;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 0 0 10px;
-            color: #e6e6ef;
-        }
-
-        .card-description {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 15px;
-        }
-
-        .card-tag {
-            display: inline-block;
-            font-size: 10px;
-            border-radius: 5px;
-            background-color: #0d1117;
-            padding: 4px;
-            margin-block-end: 12px;
-            color: #dcdcdc;
-        }
-
-        .code-editor {
-            background-color: #0d1117;
-            color: #dcdcdc;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            border-radius: 5px;
-            padding: 15px;
-            overflow: auto;
-            height: 150px;
-            border: 1px solid #333;
-        }
-
-        .code-editor::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .code-editor::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 4px;
-        }
-
-        .code-editor pre code {
-            white-space: pre-wrap;
-            display: block;
+        @keyframes falling {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(calc(100vh + 100px)) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         @keyframes fadeIn {
@@ -291,26 +233,11 @@
     </style>
 </head>
 <body>
-    <!-- Intro Card -->
-    <div class="intro-card" id="introCard">
-        <div class="mac-header">
-            <span class="red"></span>
-            <span class="yellow"></span>
-            <span class="green"></span>
-        </div>
-        <h3 class="card-title">Welcome to bio nns</h3>
-        <p class="card-description">Loading profile information...</p>
-        <span class="card-tag">v1.0.0</span>
-        <div class="code-editor">
-            <pre><code>Initializing system...
-Loading components...
-Checking dependencies...
-Profile ready in 3s...</code></pre>
-        </div>
-    </div>
+    <!-- Falling Images -->
+    <div class="falling-images" id="fallingImages"></div>
 
     <!-- Main Content -->
-    <div class="content-container" id="mainContent" style="display: none;">
+    <div class="content-container" id="mainContent">
         <img src="https://i.postimg.cc/mrZWT7v5/photo-2025-07-08-07-10-56.jpg" alt="Аватар" class="avatar">
         <h2>bio angel dust</h2>
         <p>
@@ -326,10 +253,12 @@ Profile ready in 3s...</code></pre>
         <div class="quote">
           «You caress me, and then you stomp on me. You're opening my soul and making me look like a fool! Did I describe our relationship, Tyler?!»
         </div>
+        <div class="social-buttons">
             <a href="https://t.me/qhoxelly" class="social-button" target="_blank">
                 <i class="fab fa-telegram"></i>
                 <span>My p.m</span>
             </a>
+        </div>
     </div>
 
     <button class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
@@ -337,26 +266,39 @@ Profile ready in 3s...</code></pre>
     </button>
 
     <script>
-        // Show intro card and then main content
         document.addEventListener('DOMContentLoaded', function() {
-            const introCard = document.getElementById('introCard');
-            const mainContent = document.getElementById('mainContent');
-            
-            // Show intro card
-            setTimeout(() => {
-                introCard.classList.add('show');
-            }, 100);
-            
-            // Hide intro card and show main content after 3 seconds
-            setTimeout(() => {
-                introCard.classList.remove('show');
-                introCard.classList.add('hide');
+            // Create falling images
+            function createFallingImages() {
+                const container = document.getElementById('fallingImages');
+                const imageCount = 15;
                 
-                setTimeout(() => {
-                    introCard.style.display = 'none';
-                    mainContent.style.display = 'block';
-                }, 500);
-            }, 3000);
+                for (let i = 0; i < imageCount; i++) {
+                    const img = document.createElement('div');
+                    img.className = 'falling-img';
+                    
+                    // Random position
+                    const left = Math.random() * 100;
+                    img.style.left = `${left}%`;
+                    
+                    // Random size
+                    const size = Math.random() * 30 + 20;
+                    img.style.width = `${size}px`;
+                    img.style.height = `${size}px`;
+                    
+                    // Random animation duration and delay
+                    const duration = Math.random() * 10 + 5;
+                    const delay = Math.random() * 5;
+                    img.style.animation = `falling ${duration}s linear ${delay}s infinite`;
+                    
+                    // Random rotation
+                    const rotation = Math.random() * 360;
+                    img.style.transform = `rotate(${rotation}deg)`;
+                    
+                    container.appendChild(img);
+                }
+            }
+            
+            createFallingImages();
         });
 
         window.addEventListener('scroll', () => {
